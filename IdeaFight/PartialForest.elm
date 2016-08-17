@@ -1,10 +1,14 @@
 -- a partially ordered forest
 module IdeaFight.PartialForest exposing (Forest, empty, fromList, getNextPair, isEmpty)
 
-type Forest a = Forest (List a)
+type Node a = Node a (List (Node a))
+type Forest a = Forest (List (Node a))
+
+makeNode : a -> Node a
+makeNode value = Node value []
 
 fromList : List a -> Forest a
-fromList values = Forest values
+fromList values = Forest <| List.map makeNode values
 
 empty : Forest a
 empty = fromList []
@@ -18,5 +22,5 @@ isEmpty (Forest values) =
 getNextPair : Forest a -> (a, a)
 getNextPair (Forest values) =
   case values of
-    a :: b :: _ -> (a, b)
+    (Node a _) :: (Node b _) :: _ -> (a, b)
     _ -> Debug.crash "oh shit"
