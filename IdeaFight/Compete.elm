@@ -1,5 +1,6 @@
 module IdeaFight.Compete exposing (Model, Msg, init, update, subscriptions, view)
 
+import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
 
 import Html.App as App
@@ -8,18 +9,18 @@ import Html exposing (Html, text)
 import Random
 import String
 
-type alias Model = (List String, Int)
+type alias Model = (Forest.Forest String, Int)
 type Msg = ShuffledContents (List String)
 
 init : String -> (Model, Cmd Msg)
 init contents =
   let lines = String.lines contents
-  in (([], 3), Random.generate ShuffledContents <| Shuffle.shuffle lines)
+  in ((Forest.empty, 3), Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg (_, numTop) =
   case msg of
-    ShuffledContents contents -> ((contents, numTop), Cmd.none)
+    ShuffledContents contents -> ((Forest.fromList contents, numTop), Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
