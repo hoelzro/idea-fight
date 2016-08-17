@@ -2,9 +2,10 @@ import Html.App as App
 import Html exposing (Html)
 
 import IdeaFight.LandingPage as LandingPage
+import IdeaFight.Compete as Compete
 
-type Model = LandingPageModel LandingPage.Model
-type Msg   = LandingPageMsg LandingPage.Msg
+type Model = LandingPageModel LandingPage.Model | CompeteModel Compete.Model
+type Msg   = LandingPageMsg LandingPage.Msg | CompeteMsg Compete.Msg
 
 mapTEA : (modela -> modelb) -> (msga -> msgb) -> (modela, Cmd msga) -> (modelb, Cmd msgb)
 mapTEA modelTransform msgTransform (oldModel, oldCmd) =
@@ -15,19 +16,23 @@ init = mapTEA LandingPageModel LandingPageMsg <| LandingPage.init
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
-  let _ = Debug.log "model" model in
   case (msg, model) of
     (LandingPageMsg msg, LandingPageModel model) -> mapTEA LandingPageModel LandingPageMsg <| LandingPage.update msg model
+    (CompeteMsg msg, CompeteModel model)         -> mapTEA CompeteModel CompeteMsg         <| Compete.update msg model
+
+    (_, _) -> Debug.crash "Model-Message mismatch"
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
   case model of
     LandingPageModel model -> Sub.map LandingPageMsg <| LandingPage.subscriptions model
+    CompeteModel model -> Sub.map CompeteMsg <| Compete.subscriptions model
 
 view : Model -> Html Msg
 view model =
   case model of
     LandingPageModel model -> App.map LandingPageMsg <| LandingPage.view model
+    CompeteModel model -> App.map CompeteMsg <| Compete.view model
 
 main : Program Never
 main = App.program {
