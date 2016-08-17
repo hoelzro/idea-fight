@@ -26,3 +26,11 @@ subscriptions _ = Sub.none
 
 view : Model -> Html Msg
 view model = text <| toString model
+
+main : Program Never
+main = App.program {
+    init = init "one\ntwo\nthree\nfour\nfive\nsix\nseven\neight",
+    update = update,
+    subscriptions = subscriptions,
+    view = view
+  }
