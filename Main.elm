@@ -18,7 +18,7 @@ switchSubAppsIfNeeded : (Model, Cmd Msg) -> (Model, Cmd Msg)
 switchSubAppsIfNeeded (model, cmd) =
   case model of
     -- XXX validate
-    LandingPageModel (contents, True) -> (CompeteModel (), Cmd.none)
+    LandingPageModel (contents, True) -> mapTEA CompeteModel CompeteMsg <| Compete.init contents
     _ -> (model, cmd)
 
 update : Msg -> Model -> (Model, Cmd Msg)
