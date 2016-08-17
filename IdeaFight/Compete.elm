@@ -1,18 +1,25 @@
 module IdeaFight.Compete exposing (Model, Msg, init, update, subscriptions, view)
 
+import IdeaFight.Shuffle as Shuffle
+
 import Html.App as App
 import Html exposing (Html, text)
 
+import Random
 import String
 
 type alias Model = List String
-type alias Msg = ()
+type Msg = ShuffledContents (List String)
 
 init : String -> (Model, Cmd Msg)
-init contents = (String.split "\n" contents, Cmd.none)
+init contents =
+  let lines = String.lines contents
+  in ([], Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg model = (model, Cmd.none)
+update msg model =
+  case msg of
+    ShuffledContents contents -> (contents, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
