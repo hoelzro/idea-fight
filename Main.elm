@@ -14,10 +14,17 @@ mapTEA modelTransform msgTransform (oldModel, oldCmd) =
 init : (Model, Cmd Msg)
 init = mapTEA LandingPageModel LandingPageMsg <| LandingPage.init
 
+switchSubAppsIfNeeded : (Model, Cmd Msg) -> (Model, Cmd Msg)
+switchSubAppsIfNeeded (model, cmd) =
+  case model of
+    -- XXX validate
+    LandingPageModel (contents, True) -> (CompeteModel (), Cmd.none)
+    _ -> (model, cmd)
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case (msg, model) of
-    (LandingPageMsg msg, LandingPageModel model) -> mapTEA LandingPageModel LandingPageMsg <| LandingPage.update msg model
+    (LandingPageMsg msg, LandingPageModel model) -> switchSubAppsIfNeeded <| mapTEA LandingPageModel LandingPageMsg <| LandingPage.update msg model
     (CompeteMsg msg, CompeteModel model)         -> mapTEA CompeteModel CompeteMsg         <| Compete.update msg model
 
     (_, _) -> Debug.crash "Model-Message mismatch"
