@@ -8,18 +8,18 @@ import Html exposing (Html, text)
 import Random
 import String
 
-type alias Model = List String
+type alias Model = (List String, Int)
 type Msg = ShuffledContents (List String)
 
 init : String -> (Model, Cmd Msg)
 init contents =
   let lines = String.lines contents
-  in ([], Random.generate ShuffledContents <| Shuffle.shuffle lines)
+  in (([], 3), Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
+update msg (_, numTop) =
   case msg of
-    ShuffledContents contents -> (contents, Cmd.none)
+    ShuffledContents contents -> ((contents, numTop), Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
