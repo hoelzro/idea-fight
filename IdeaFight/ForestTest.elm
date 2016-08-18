@@ -8,7 +8,7 @@ import Random
 import Time
 
 type alias Model = Forest.Forest Int
-type Msg = ShuffleMe (List Int) | Tick
+type Msg = ShuffleMe (List Int) | Advance
 
 stepForest : Forest.Forest comparable -> Forest.Forest comparable
 stepForest forest =
@@ -22,10 +22,10 @@ update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     ShuffleMe values -> (Forest.fromList values, Cmd.none)
-    Tick -> (stepForest model, Cmd.none)
+    Advance -> (stepForest model, Cmd.none)
 
 subscriptions : Model -> Sub Msg
-subscriptions _ = Time.every (Time.second * 5) <| always Tick
+subscriptions _ = Time.every (Time.second * 5) <| always Advance
 
 view : Model -> Html Msg
 view model = div [] [
