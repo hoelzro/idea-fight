@@ -22,15 +22,14 @@ isEmpty (Forest values) =
     [] -> True
     _  -> False
 
--- XXX return Maybe (a, a)?
-getNextPairNodes : List (Node a) -> (a, a)
+getNextPairNodes : List (Node a) -> Maybe (a, a)
 getNextPairNodes nodes =
   case nodes of
-    (Node a _) :: (Node b _) :: _ -> (a, b)
+    (Node a _) :: (Node b _) :: _ -> Just (a, b)
     [(Node _ children)] -> getNextPairNodes children
-    _ -> Debug.crash "oh shit"
+    _ -> Nothing
 
-getNextPair : Forest a -> (a, a)
+getNextPair : Forest a -> Maybe (a, a)
 getNextPair (Forest nodes) = getNextPairNodes nodes
 
 reparentNode : Node a -> Node a -> Node a

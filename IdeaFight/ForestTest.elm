@@ -13,8 +13,9 @@ type Msg = ShuffleMe (List Int) | Advance
 
 stepForest : Forest.Forest comparable -> Forest.Forest comparable
 stepForest forest =
-  let (a, b) = Forest.getNextPair forest
-  in Forest.choose forest <| max a b
+  case Forest.getNextPair forest of
+    Just (a, b) -> Forest.choose forest <| max a b
+    Nothing -> forest
 
 init : (Model, Cmd Msg)
 init = (Forest.empty, Random.generate ShuffleMe (Shuffle.shuffle [1..8]))

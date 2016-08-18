@@ -32,13 +32,14 @@ view (forest, numTop) =
   if Forest.isEmpty forest then
     div [] []
   else
-    let (lhs, rhs) = Forest.getNextPair forest
-    in div [] [
+    case Forest.getNextPair forest of
+      Just (lhs, rhs) -> div [] [
         text "Which of these ideas do you like better?",
         br [] [],
         button [onClick <| Choice lhs] [text lhs],
         button [onClick <| Choice rhs] [text rhs]
       ]
+      Nothing -> text "The forest is totally ordered!"
 
 main : Program Never
 main = App.program {
