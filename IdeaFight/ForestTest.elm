@@ -1,5 +1,5 @@
 import Html.App as App
-import Html exposing (Html)
+import Html exposing (Html, br, div, text)
 
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
@@ -28,7 +28,11 @@ subscriptions : Model -> Sub Msg
 subscriptions _ = Time.every (Time.second * 5) <| always Tick
 
 view : Model -> Html Msg
-view model = Forest.drawForest model
+view model = div [] [
+    text <| toString <| Forest.topNCount model,
+    br [] [],
+    Forest.drawForest model
+  ]
 
 main : Program Never
 main = App.program {

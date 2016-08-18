@@ -1,5 +1,5 @@
 -- a partially ordered forest
-module IdeaFight.PartialForest exposing (Forest, choose, drawForest, empty, fromList, getNextPair, isEmpty)
+module IdeaFight.PartialForest exposing (Forest, choose, drawForest, empty, fromList, getNextPair, isEmpty, topNCount)
 
 -- XXX DEBUG
 import Html exposing (Html, li, ul, text)
@@ -51,3 +51,11 @@ choose (Forest values) choice =
         else if choice == nodeValue b then Forest <| List.append rest [ reparentNode b a ]
         else Debug.crash "You somehow made an impossible choice"
     _ -> Debug.crash "oh shit"
+
+topNCount : Forest a -> Int
+topNCount (Forest nodes) =
+  let topNCountNodes = \nodes ->
+      case nodes of
+        [(Node _ children)] -> 1 + (topNCountNodes children)
+        _ -> 0
+  in topNCountNodes nodes
