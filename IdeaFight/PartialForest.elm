@@ -55,7 +55,7 @@ chooseNodes nodes choice =
         else if choice == nodeValue b then List.append rest [ reparentNode b a ]
         else Debug.crash "You somehow made an impossible choice"
     [(Node value children)] -> [Node value <| chooseNodes children choice]
-    _ -> Debug.crash "oh shit"
+    _ -> Debug.crash "You somehow called chooseNodes on a totally ordered forest"
 
 choose : Forest a -> a -> Forest a
 choose (Forest values) choice =
