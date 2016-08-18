@@ -1,5 +1,6 @@
 import Html.App as App
-import Html exposing (Html, br, div, text)
+import Html exposing (Html, br, button, div, text)
+import Html.Events exposing (onClick)
 
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
@@ -25,10 +26,12 @@ update msg model =
     Advance -> (stepForest model, Cmd.none)
 
 subscriptions : Model -> Sub Msg
-subscriptions _ = Time.every (Time.second * 5) <| always Advance
+subscriptions _ = Sub.none
 
 view : Model -> Html Msg
 view model = div [] [
+    button [ onClick Advance ] [ text "Advance" ],
+    br [] [],
     text <| toString <| Forest.topNCount model,
     br [] [],
     Forest.drawForest model
