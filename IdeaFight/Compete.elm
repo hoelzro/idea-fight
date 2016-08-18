@@ -27,8 +27,8 @@ update msg (forest, numTop) =
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
 
-view : Model -> Html Msg
-view (forest, numTop) =
+chooser : Forest.Forest String -> Html Msg
+chooser forest =
   if Forest.isEmpty forest then
     div [] []
   else
@@ -40,6 +40,10 @@ view (forest, numTop) =
         button [onClick <| Choice rhs] [text rhs]
       ]
       Nothing -> text "The forest is totally ordered!"
+
+view : Model -> Html Msg
+view (forest, numTop) =
+  chooser forest
 
 main : Program Never
 main = App.program {
