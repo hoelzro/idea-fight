@@ -1,5 +1,8 @@
 -- a partially ordered forest
-module IdeaFight.PartialForest exposing (Forest, empty, fromList, getNextPair, isEmpty)
+module IdeaFight.PartialForest exposing (Forest, choose, drawForest, empty, fromList, getNextPair, isEmpty)
+
+-- XXX DEBUG
+import Html exposing (Html, li, ul, text)
 
 type Node a = Node a (List (Node a))
 type Forest a = Forest (List (Node a))
@@ -24,3 +27,11 @@ getNextPair (Forest values) =
   case values of
     (Node a _) :: (Node b _) :: _ -> (a, b)
     _ -> Debug.crash "oh shit"
+
+drawNode : Node a -> Html msg
+drawNode (Node value children) =
+  li [] [ (text <| toString value), ul [] (List.map drawNode children) ]
+
+drawForest : Forest a -> Html msg
+drawForest (Forest nodes) =
+  ul [] <| List.map drawNode nodes
