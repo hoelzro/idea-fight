@@ -1,3 +1,4 @@
+-- XXX you need at least three ideas (or whatever N is)
 module IdeaFight.LandingPage exposing (Model, Msg, init, update, subscriptions, view)
 
 import Html.App as App
