@@ -5,12 +5,13 @@ import IdeaFight.Shuffle as Shuffle
 
 import Html.App as App
 import Html exposing (Html, br, button, div, text)
+import Html.Events exposing (onClick)
 
 import Random
 import String
 
 type alias Model = (Forest.Forest String, Int)
-type Msg = ShuffledContents (List String)
+type Msg = ShuffledContents (List String) | Choice String
 
 init : String -> (Model, Cmd Msg)
 init contents =
@@ -18,9 +19,10 @@ init contents =
   in ((Forest.empty, 3), Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg (_, numTop) =
+update msg (forest, numTop) =
   case msg of
     ShuffledContents contents -> ((Forest.fromList contents, numTop), Cmd.none)
+    Choice choice -> ((Forest.choose forest choice, numTop), Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
@@ -34,8 +36,8 @@ view (forest, numTop) =
     in div [] [
         text "Which of these ideas do you like better?",
         br [] [],
-        button [] [text lhs],
-        button [] [text rhs]
+        button [onClick <| Choice lhs] [text lhs],
+        button [onClick <| Choice rhs] [text rhs]
       ]
 
 main : Program Never
