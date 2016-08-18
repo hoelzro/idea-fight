@@ -22,11 +22,16 @@ isEmpty (Forest values) =
     [] -> True
     _  -> False
 
-getNextPair : Forest a -> (a, a)
-getNextPair (Forest values) =
-  case values of
+-- XXX return Maybe (a, a)?
+getNextPairNodes : List (Node a) -> (a, a)
+getNextPairNodes nodes =
+  case nodes of
     (Node a _) :: (Node b _) :: _ -> (a, b)
+    [(Node _ children)] -> getNextPairNodes children
     _ -> Debug.crash "oh shit"
+
+getNextPair : Forest a -> (a, a)
+getNextPair (Forest nodes) = getNextPairNodes nodes
 
 reparentNode : Node a -> Node a -> Node a
 reparentNode (Node value children) child = Node value (child :: children)
@@ -42,15 +47,20 @@ drawForest : Forest a -> Html msg
 drawForest (Forest nodes) =
   ul [] <| List.map drawNode nodes
 
-choose : Forest a -> a -> Forest a
-choose (Forest values) choice =
-  case values of
+chooseNodes : List (Node a) -> a -> List (Node a)
+chooseNodes nodes choice =
+  case nodes of
     a :: b :: rest ->
       if choice == nodeValue a
-        then Forest <| List.append rest [reparentNode a b]
-        else if choice == nodeValue b then Forest <| List.append rest [ reparentNode b a ]
+        then List.append rest [reparentNode a b]
+        else if choice == nodeValue b then List.append rest [ reparentNode b a ]
         else Debug.crash "You somehow made an impossible choice"
+    [(Node value children)] -> [Node value <| chooseNodes children choice]
     _ -> Debug.crash "oh shit"
+
+choose : Forest a -> a -> Forest a
+choose (Forest values) choice =
+  Forest <| chooseNodes values choice
 
 topNCount : Forest a -> Int
 topNCount (Forest nodes) =
