@@ -4,7 +4,7 @@ import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
 
 import Html.App as App
-import Html exposing (Html, br, button, div, text)
+import Html exposing (Html, br, button, div, li, text, ul)
 import Html.Events exposing (onClick)
 
 import Random
@@ -41,9 +41,18 @@ chooser forest =
       ]
       Nothing -> text "The forest is totally ordered!"
 
+topValuesSoFar : Forest.Forest String -> Int -> Html Msg
+topValuesSoFar forest topN =
+  let topValues = Forest.topN forest topN
+  in ul [] <| List.map (\value -> li [] [ text value ]) topValues
+
 view : Model -> Html Msg
 view (forest, numTop) =
-  chooser forest
+  div [] [
+    chooser forest,
+    br [] [],
+    topValuesSoFar forest numTop
+  ]
 
 main : Program Never
 main = App.program {

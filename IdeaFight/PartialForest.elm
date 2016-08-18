@@ -1,5 +1,5 @@
 -- a partially ordered forest
-module IdeaFight.PartialForest exposing (Forest, choose, drawForest, empty, fromList, getNextPair, isEmpty, topNCount)
+module IdeaFight.PartialForest exposing (Forest, choose, drawForest, empty, fromList, getNextPair, isEmpty, topN, topNCount)
 
 -- XXX DEBUG
 import Html exposing (Html, li, ul, text)
