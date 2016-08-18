@@ -68,3 +68,14 @@ topNCount (Forest nodes) =
         [(Node _ children)] -> 1 + (topNCountNodes children)
         _ -> 0
   in topNCountNodes nodes
+
+topNNodes : List (Node a) -> Int -> List a
+topNNodes nodes count =
+  case (nodes, count) of
+    (_, 0)           -> []
+    (_ :: _ :: _, _) -> []
+    ([(Node value children)], count) -> value :: (topNNodes children <| count - 1)
+    _ -> []
+
+topN : Forest a -> Int -> List a
+topN (Forest nodes) count = topNNodes nodes count
