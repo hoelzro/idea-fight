@@ -28,6 +28,12 @@ getNextPair (Forest values) =
     (Node a _) :: (Node b _) :: _ -> (a, b)
     _ -> Debug.crash "oh shit"
 
+reparentNode : Node a -> Node a -> Node a
+reparentNode (Node value children) child = Node value (child :: children)
+
+nodeValue : Node a -> a
+nodeValue (Node value _) = value
+
 drawNode : Node a -> Html msg
 drawNode (Node value children) =
   li [] [ (text <| toString value), ul [] (List.map drawNode children) ]
@@ -35,3 +41,13 @@ drawNode (Node value children) =
 drawForest : Forest a -> Html msg
 drawForest (Forest nodes) =
   ul [] <| List.map drawNode nodes
+
+choose : Forest a -> a -> Forest a
+choose (Forest values) choice =
+  case values of
+    a :: b :: rest ->
+      if choice == nodeValue a
+        then Forest <| List.append rest [reparentNode a b]
+        else if choice == nodeValue b then Forest <| List.append rest [ reparentNode b a ]
+        else Debug.crash "You somehow made an impossible choice"
+    _ -> Debug.crash "oh shit"
