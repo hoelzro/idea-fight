@@ -41,8 +41,8 @@ chooser forest =
       ]
       Nothing -> text "The forest is totally ordered!"
 
-topValuesSoFar : Forest.Forest String -> Int -> Html Msg
-topValuesSoFar forest topN =
+topValuesSoFar : Forest.Forest String -> Html Msg
+topValuesSoFar forest =
   let topValues = Forest.topN forest
   in ul [] <| List.map (\value -> li [] [ text value ]) topValues
 
@@ -51,7 +51,7 @@ view (forest, numTop) =
   div [] [
     chooser forest,
     br [] [],
-    topValuesSoFar forest numTop
+    topValuesSoFar forest
   ]
 
 main : Program Never
