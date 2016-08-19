@@ -5,6 +5,7 @@ import IdeaFight.Shuffle as Shuffle
 
 import Html.App as App
 import Html exposing (Html, br, button, div, li, text, ul)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 
 import Random
@@ -39,8 +40,8 @@ chooser forest =
     Just (lhs, rhs) -> div [] [
       text "Which of these ideas do you like better?",
       br [] [],
-      button [onClick <| Choice lhs] [text lhs],
-      button [onClick <| Choice rhs] [text rhs]
+      button [onClick <| Choice lhs, class "button-primary"] [text lhs],
+      button [onClick <| Choice rhs, class "button-primary"] [text rhs]
     ]
     Nothing -> text "The forest is totally ordered!"
 

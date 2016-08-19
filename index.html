@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Idea Fight!</title>
+
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="one-half column" style="margin-top: 25px">
+        <div id='elm-application'></div>
+      </div>
+    </div>
+  </div>
+
+  <script type='text/javascript' src='js/idea-fight.js'>
+  </script>
+
+  <script type='text/javascript'>
+    var node = document.getElementById('elm-application');
+    var app = Elm.Main.embed(node);
+  </script>
+</body>
+</html>
