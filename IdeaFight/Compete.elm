@@ -43,7 +43,7 @@ chooser forest =
 
 topValuesSoFar : Forest.Forest String -> Int -> Html Msg
 topValuesSoFar forest topN =
-  let topValues = Forest.topN forest topN
+  let topValues = Forest.topN forest
   in ul [] <| List.map (\value -> li [] [ text value ]) topValues
 
 view : Model -> Html Msg
