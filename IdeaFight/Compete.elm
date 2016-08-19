@@ -10,19 +10,25 @@ import Html.Events exposing (onClick)
 import Random
 import String
 
-type alias Model = Forest.Forest String
+type Model = Uninitialized | Initialized (Forest.Forest String)
 type Msg = ShuffledContents (List String) | Choice String
 
 init : String -> (Model, Cmd Msg)
 init contents =
   let lines = String.lines contents
-  in (Forest.empty, Random.generate ShuffledContents <| Shuffle.shuffle lines)
+  in (Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg forest =
-  case msg of
-    ShuffledContents contents -> (Forest.fromList contents, Cmd.none)
-    Choice choice -> (Forest.choose forest choice, Cmd.none)
+update msg model =
+  case model of
+    Uninitialized ->
+      case msg of
+        ShuffledContents contents -> (Initialized <| Forest.fromList contents, Cmd.none)
+        _ -> Debug.crash "Somehow you got a non-initialization message on an uninitialized state"
+    Initialized forest ->
+      case msg of
+        Choice choice -> (Initialized <| Forest.choose forest choice, Cmd.none)
+        _ -> Debug.crash "Somehow you got an initialization message on an initialized state"
 
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
@@ -47,12 +53,15 @@ topValuesSoFar forest =
   in ul [] <| List.map (\value -> li [] [ text value ]) topValues
 
 view : Model -> Html Msg
-view forest =
-  div [] [
-    chooser forest,
-    br [] [],
-    topValuesSoFar forest
-  ]
+view model =
+  case model of
+    Uninitialized -> text ""
+    Initialized forest ->
+      div [] [
+        chooser forest,
+        br [] [],
+        topValuesSoFar forest
+      ]
 
 main : Program Never
 main = App.program {
