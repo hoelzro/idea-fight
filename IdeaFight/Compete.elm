@@ -35,17 +35,14 @@ subscriptions _ = Sub.none
 
 chooser : Forest.Forest String -> Html Msg
 chooser forest =
-  if Forest.isEmpty forest then
-    div [] []
-  else
-    case Forest.getNextPair forest of
-      Just (lhs, rhs) -> div [] [
-        text "Which of these ideas do you like better?",
-        br [] [],
-        button [onClick <| Choice lhs] [text lhs],
-        button [onClick <| Choice rhs] [text rhs]
-      ]
-      Nothing -> text "The forest is totally ordered!"
+  case Forest.getNextPair forest of
+    Just (lhs, rhs) -> div [] [
+      text "Which of these ideas do you like better?",
+      br [] [],
+      button [onClick <| Choice lhs] [text lhs],
+      button [onClick <| Choice rhs] [text rhs]
+    ]
+    Nothing -> text "The forest is totally ordered!"
 
 topValuesSoFar : Forest.Forest String -> Html Msg
 topValuesSoFar forest =
