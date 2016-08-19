@@ -59,11 +59,3 @@ view model =
         br [] [],
         topValuesSoFar forest
       ]
-
-main : Program Never
-main = App.program {
-    init = init "one\ntwo\nthree\nfour\nfive\nsix\nseven\neight",
-    update = update,
-    subscriptions = subscriptions,
-    view = view
-  }
