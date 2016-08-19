@@ -10,19 +10,19 @@ import Html.Events exposing (onClick)
 import Random
 import String
 
-type alias Model = (Forest.Forest String, Int)
+type alias Model = Forest.Forest String
 type Msg = ShuffledContents (List String) | Choice String
 
 init : String -> (Model, Cmd Msg)
 init contents =
   let lines = String.lines contents
-  in ((Forest.empty, 3), Random.generate ShuffledContents <| Shuffle.shuffle lines)
+  in (Forest.empty, Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg (forest, numTop) =
+update msg forest =
   case msg of
-    ShuffledContents contents -> ((Forest.fromList contents, numTop), Cmd.none)
-    Choice choice -> ((Forest.choose forest choice, numTop), Cmd.none)
+    ShuffledContents contents -> (Forest.fromList contents, Cmd.none)
+    Choice choice -> (Forest.choose forest choice, Cmd.none)
 
 subscriptions : Model -> Sub Msg
 subscriptions _ = Sub.none
@@ -47,7 +47,7 @@ topValuesSoFar forest =
   in ul [] <| List.map (\value -> li [] [ text value ]) topValues
 
 view : Model -> Html Msg
-view (forest, numTop) =
+view forest =
   div [] [
     chooser forest,
     br [] [],
