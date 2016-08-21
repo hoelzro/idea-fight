@@ -26,15 +26,15 @@ version, or simply open `index.html` in your browser.
 
 To use Idea Fight, just enter a list of ideas into the provided text box, one per line:
 
-    IMAGE
+![Input your ideas](screenshots/idea-list.jpg)
 
 Once you're done, hit the "Continue" button, and you'll be presented with two
 ideas among the ideas you entered in:
 
-    IMAGE
+![Choose the better idea](screenshots/choice.jpg)
 
 Click the idea you prefer between the choices.  As Idea Fight determines which
 ideas are the best, it will present them to you; keep making selections until
 you have as many good ideas as you want!
 
-    GIF
+![Full example](screenshots/example.gif)
