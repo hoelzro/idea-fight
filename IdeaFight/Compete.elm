@@ -48,7 +48,9 @@ chooser forest =
 topValuesSoFar : Forest.Forest String -> Html Msg
 topValuesSoFar forest =
   let topValues = Forest.topN forest
-  in ul [] <| List.map (\value -> li [] [ text value ]) topValues
+  in case topValues of
+      []        -> text "We haven't found the best idea yet - keep choosing!"
+      topValues -> div [] [ text "Your best ideas:", ul [] <| List.map (\value -> li [] [ text value ]) topValues ]
 
 view : Model -> Html Msg
 view model =
