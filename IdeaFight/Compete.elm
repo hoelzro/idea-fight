@@ -43,7 +43,7 @@ chooser forest =
       button [onClick <| Choice lhs, class "button-primary"] [text lhs],
       button [onClick <| Choice rhs, class "button-primary"] [text rhs]
     ]
-    Nothing -> text "The forest is totally ordered!"
+    Nothing -> text "Your ideas are totally ordered!"
 
 topValuesSoFar : Forest.Forest String -> Html Msg
 topValuesSoFar forest =
