@@ -17,7 +17,6 @@ init = mapTEA LandingPageModel LandingPageMsg <| LandingPage.init
 switchSubAppsIfNeeded : (Model, Cmd Msg) -> (Model, Cmd Msg)
 switchSubAppsIfNeeded (model, cmd) =
   case model of
-    -- XXX validate
     LandingPageModel (contents, True) -> mapTEA CompeteModel CompeteMsg <| Compete.init contents
     _ -> (model, cmd)
 
