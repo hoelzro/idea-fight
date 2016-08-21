@@ -1,4 +1,5 @@
--- a partially ordered forest
+-- A partially ordered forest.  See blog post linked to in README
+-- for details.
 module IdeaFight.PartialForest exposing (Forest, choose, fromList, getNextPair, topN)
 
 type Node a = Node a (List (Node a))
