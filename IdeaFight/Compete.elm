@@ -16,7 +16,7 @@ type Msg = ShuffledContents (List String) | Choice String
 
 init : String -> (Model, Cmd Msg)
 init contents =
-  let lines = String.lines contents
+  let lines = String.lines <| String.trim contents
   in (Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
 update : Msg -> Model -> (Model, Cmd Msg)
