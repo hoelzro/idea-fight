@@ -50,7 +50,7 @@ topValuesSoFar forest =
   let topValues = Forest.topN forest
   in case topValues of
       []        -> text "We haven't found the best idea yet - keep choosing!"
-      topValues -> div [] [ text "Your best ideas:", ul [] <| List.map (\value -> li [] [ text value ]) topValues ]
+      topValues -> div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
 
 view : Model -> Html Msg
 view model =
