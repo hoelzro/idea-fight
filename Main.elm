@@ -3,8 +3,8 @@ import Html exposing (Html)
 import IdeaFight.LandingPage as LandingPage
 import IdeaFight.Compete as Compete
 
-type Model = LandingPageModel LandingPage.Model | CompeteModel Compete.Model
-type Msg   = LandingPageMsg LandingPage.Msg | CompeteMsg Compete.Msg
+type Model = LandingPageModel LandingPage.Model | CompeteModel (Compete.Model String)
+type Msg   = LandingPageMsg LandingPage.Msg | CompeteMsg (Compete.Msg String)
 
 mapTEA : (modela -> modelb) -> (msga -> msgb) -> (modela, Cmd msga) -> (modelb, Cmd msgb)
 mapTEA modelTransform msgTransform (oldModel, oldCmd) =
