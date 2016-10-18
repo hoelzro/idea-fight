@@ -20,7 +20,7 @@ init contents =
   let lines = String.lines <| String.trim contents
   in (Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines)
 
-update : Msg String -> Model String -> (Model String, Cmd (Msg String))
+update : Msg a -> Model a -> (Model a, Cmd (Msg a))
 update msg model =
   case model of
     Uninitialized ->
@@ -32,13 +32,13 @@ update msg model =
         Choice choice -> (Initialized <| Forest.choose forest choice, Cmd.none)
         _ -> Debug.crash "Somehow you got an initialization message on an initialized state"
 
-mapKeyPresses : String -> String -> Keyboard.KeyCode -> Msg String
+mapKeyPresses : a -> a -> Keyboard.KeyCode -> Msg a
 mapKeyPresses left right code =
   if code == Char.toCode '1' then Choice left
   else if code == Char.toCode '2' then Choice right
   else NoOp
 
-subscriptions : Model String -> Sub (Msg String)
+subscriptions : Model a -> Sub (Msg a)
 subscriptions model =
   case model of
     Uninitialized -> Sub.none
@@ -47,7 +47,7 @@ subscriptions model =
         Just (left, right) -> Keyboard.presses <| mapKeyPresses left right
         Nothing -> Sub.none
 
-chooser : Forest.Forest String -> Html (Msg String)
+chooser : Forest.Forest a -> Html (Msg a)
 chooser forest =
   case Forest.getNextPair forest of
     Just (lhs, rhs) -> div [] [
@@ -58,14 +58,14 @@ chooser forest =
     ]
     Nothing -> text "Your ideas are totally ordered!"
 
-topValuesSoFar : Forest.Forest String -> Html (Msg String)
+topValuesSoFar : Forest.Forest a -> Html (Msg a)
 topValuesSoFar forest =
   let topValues = Forest.topN forest
   in case topValues of
       []        -> text "We haven't found the best idea yet - keep choosing!"
       topValues -> div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
 
-view : Model String -> Html (Msg String)
+view : Model a -> Html (Msg a)
 view model =
   case model of
     Uninitialized -> text ""
