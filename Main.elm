@@ -1,4 +1,4 @@
-import Html exposing (Html)
+import Html exposing (Html, text)
 import String
 
 import IdeaFight.LandingPage as LandingPage
@@ -6,6 +6,12 @@ import IdeaFight.Compete as Compete
 
 type Model = LandingPageModel LandingPage.Model | CompeteModel (Compete.Model String)
 type Msg   = LandingPageMsg LandingPage.Msg | CompeteMsg (Compete.Msg String)
+
+lineIdeaFunctions : Compete.IdeaFunctions String
+lineIdeaFunctions = {
+    renderChoice = text,
+    renderResult = text
+  }
 
 mapTEA : (modela -> modelb) -> (msga -> msgb) -> (modela, Cmd msga) -> (modelb, Cmd msgb)
 mapTEA modelTransform msgTransform (oldModel, oldCmd) =
@@ -19,7 +25,7 @@ switchSubAppsIfNeeded (model, cmd) =
   case model of
     LandingPageModel (contents, True) ->
       let lines = String.lines <| String.trim contents
-      in mapTEA CompeteModel CompeteMsg <| Compete.init lines
+      in mapTEA CompeteModel CompeteMsg <| Compete.init lineIdeaFunctions lines
     _ -> (model, cmd)
 
 update : Msg -> Model -> (Model, Cmd Msg)

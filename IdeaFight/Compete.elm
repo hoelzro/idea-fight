@@ -1,4 +1,4 @@
-module IdeaFight.Compete exposing (Model, Msg, init, update, subscriptions, view)
+module IdeaFight.Compete exposing (IdeaFunctions, Model, Msg, init, update, subscriptions, view)
 
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
@@ -11,22 +11,27 @@ import Char
 import Keyboard
 import Random
 
-type Model a = Uninitialized | Initialized (Forest.Forest a)
+type alias IdeaFunctions a = {
+    renderChoice : a -> Html (Msg a),
+    renderResult : a -> Html (Msg a)
+  }
+
+type Model a = Uninitialized (IdeaFunctions a) | Initialized (IdeaFunctions a) (Forest.Forest a)
 type Msg a = ShuffledContents (List a) | Choice a | NoOp
 
-init : List a -> (Model a, Cmd (Msg a))
-init ideas = (Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle ideas)
+init : IdeaFunctions a -> List a -> (Model a, Cmd (Msg a))
+init funcs ideas = (Uninitialized funcs, Random.generate ShuffledContents <| Shuffle.shuffle ideas)
 
 update : Msg a -> Model a -> (Model a, Cmd (Msg a))
 update msg model =
   case model of
-    Uninitialized ->
+    Uninitialized funcs ->
       case msg of
-        ShuffledContents contents -> (Initialized <| Forest.fromList contents, Cmd.none)
+        ShuffledContents contents -> (Initialized funcs <| Forest.fromList contents, Cmd.none)
         _ -> Debug.crash "Somehow you got a non-initialization message on an uninitialized state"
-    Initialized forest ->
+    Initialized funcs forest ->
       case msg of
-        Choice choice -> (Initialized <| Forest.choose forest choice, Cmd.none)
+        Choice choice -> (Initialized funcs <| Forest.choose forest choice, Cmd.none)
         _ -> Debug.crash "Somehow you got an initialization message on an initialized state"
 
 mapKeyPresses : a -> a -> Keyboard.KeyCode -> Msg a
@@ -38,14 +43,14 @@ mapKeyPresses left right code =
 subscriptions : Model a -> Sub (Msg a)
 subscriptions model =
   case model of
-    Uninitialized -> Sub.none
-    Initialized forest ->
+    Uninitialized _ -> Sub.none
+    Initialized _ forest ->
       case Forest.getNextPair forest of
         Just (left, right) -> Keyboard.presses <| mapKeyPresses left right
         Nothing -> Sub.none
 
-chooser : Forest.Forest a -> Html (Msg a)
-chooser forest =
+chooser : IdeaFunctions a -> Forest.Forest a -> Html (Msg a)
+chooser funcs forest =
   case Forest.getNextPair forest of
     Just (lhs, rhs) -> div [] [
       text "Which of these ideas do you like better?",
@@ -55,8 +60,8 @@ chooser forest =
     ]
     Nothing -> text "Your ideas are totally ordered!"
 
-topValuesSoFar : Forest.Forest a -> Html (Msg a)
-topValuesSoFar forest =
+topValuesSoFar : IdeaFunctions a -> Forest.Forest a -> Html (Msg a)
+topValuesSoFar funcs forest =
   let topValues = Forest.topN forest
   in case topValues of
       []        -> text "We haven't found the best idea yet - keep choosing!"
@@ -65,10 +70,10 @@ topValuesSoFar forest =
 view : Model a -> Html (Msg a)
 view model =
   case model of
-    Uninitialized -> text ""
-    Initialized forest ->
+    Uninitialized _ -> text ""
+    Initialized funcs forest ->
       div [] [
-        chooser forest,
+        chooser funcs forest,
         br [] [],
-        topValuesSoFar forest
+        topValuesSoFar funcs forest
       ]
