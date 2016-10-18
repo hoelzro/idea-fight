@@ -10,15 +10,12 @@ import Html.Events exposing (onClick)
 import Char
 import Keyboard
 import Random
-import String
 
 type Model a = Uninitialized | Initialized (Forest.Forest a)
 type Msg a = ShuffledContents (List a) | Choice a | NoOp
 
-init : String -> (Model String, Cmd (Msg String))
-init contents =
-  let lines = String.lines <| String.trim contents
-  in (Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines)
+init : List a -> (Model a, Cmd (Msg a))
+init ideas = (Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle ideas)
 
 update : Msg a -> Model a -> (Model a, Cmd (Msg a))
 update msg model =

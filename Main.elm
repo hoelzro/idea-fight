@@ -1,4 +1,5 @@
 import Html exposing (Html)
+import String
 
 import IdeaFight.LandingPage as LandingPage
 import IdeaFight.Compete as Compete
@@ -16,7 +17,9 @@ init = mapTEA LandingPageModel LandingPageMsg <| LandingPage.init
 switchSubAppsIfNeeded : (Model, Cmd Msg) -> (Model, Cmd Msg)
 switchSubAppsIfNeeded (model, cmd) =
   case model of
-    LandingPageModel (contents, True) -> mapTEA CompeteModel CompeteMsg <| Compete.init contents
+    LandingPageModel (contents, True) ->
+      let lines = String.lines <| String.trim contents
+      in mapTEA CompeteModel CompeteMsg <| Compete.init lines
     _ -> (model, cmd)
 
 update : Msg -> Model -> (Model, Cmd Msg)
