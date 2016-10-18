@@ -53,8 +53,8 @@ chooser forest =
     Just (lhs, rhs) -> div [] [
       text "Which of these ideas do you like better?",
       br [] [],
-      button [onClick <| Choice lhs, class "button-primary"] [text lhs],
-      button [onClick <| Choice rhs, class "button-primary"] [text rhs]
+      button [onClick <| Choice lhs, class "button-primary"] [text <| toString lhs],
+      button [onClick <| Choice rhs, class "button-primary"] [text <| toString rhs]
     ]
     Nothing -> text "Your ideas are totally ordered!"
 
@@ -63,7 +63,7 @@ topValuesSoFar forest =
   let topValues = Forest.topN forest
   in case topValues of
       []        -> text "We haven't found the best idea yet - keep choosing!"
-      topValues -> div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
+      topValues -> div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text <| toString value ]) topValues ]
 
 view : Model a -> Html (Msg a)
 view model =
