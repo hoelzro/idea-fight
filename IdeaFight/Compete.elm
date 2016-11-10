@@ -28,10 +28,12 @@ update msg model =
     Uninitialized funcs ->
       case msg of
         ShuffledContents contents -> (Initialized funcs <| Forest.fromList contents, Cmd.none)
+        NoOp -> (model, Cmd.none)
         _ -> Debug.crash "Somehow you got a non-initialization message on an uninitialized state"
     Initialized funcs forest ->
       case msg of
         Choice choice -> (Initialized funcs <| Forest.choose forest choice, Cmd.none)
+        NoOp -> (model, Cmd.none)
         _ -> Debug.crash "Somehow you got an initialization message on an initialized state"
 
 mapKeyPresses : a -> a -> Keyboard.KeyCode -> Msg a
