@@ -1,4 +1,3 @@
-import Html.App as App
 import Html exposing (Html, img)
 import Html.Attributes as Attributes
 
@@ -38,8 +37,8 @@ init =
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update (CompeteMsg innerMsg) (CompeteModel innerModel) =
-  let (innerModel, cmd) =  Compete.update innerMsg innerModel
-  in (CompeteModel innerModel, Cmd.map CompeteMsg cmd)
+  let (newInnerModel, cmd) =  Compete.update innerMsg innerModel
+  in (CompeteModel newInnerModel, Cmd.map CompeteMsg cmd)
 
 subscriptions : Model -> Sub Msg
 subscriptions (CompeteModel innerModel) =
@@ -47,10 +46,10 @@ subscriptions (CompeteModel innerModel) =
 
 view : Model -> Html Msg
 view (CompeteModel innerModel) =
-  App.map CompeteMsg <| Compete.view innerModel
+  Html.map CompeteMsg <| Compete.view innerModel
 
-main : Program Never
-main = App.program {
+main : Program Never Model Msg
+main = Html.program {
     init = init,
     update = update,
     subscriptions = subscriptions,
