@@ -22,4 +22,4 @@ shuffle values =
             let (randomHead, remainder) = extractValue values index
                 remainderGen = shuffle remainder
             in Random.map (\randomTail -> randomHead :: randomTail) remainderGen
-      in Random.andThen randomIndexGenerator extractAndRecurse
+      in Random.andThen extractAndRecurse randomIndexGenerator

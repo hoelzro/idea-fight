@@ -1,4 +1,3 @@
-import Html.App as App
 import Html exposing (Html)
 
 import IdeaFight.LandingPage as LandingPage
@@ -37,11 +36,11 @@ subscriptions model =
 view : Model -> Html Msg
 view model =
   case model of
-    LandingPageModel model -> App.map LandingPageMsg <| LandingPage.view model
-    CompeteModel model -> App.map CompeteMsg <| Compete.view model
+    LandingPageModel model -> Html.map LandingPageMsg <| LandingPage.view model
+    CompeteModel model -> Html.map CompeteMsg <| Compete.view model
 
-main : Program Never
-main = App.program {
+main : Program Never Model Msg
+main = Html.program {
     init = init,
     update = update,
     subscriptions = subscriptions,

@@ -1,6 +1,5 @@
 module IdeaFight.LandingPage exposing (Model, Msg, init, update, subscriptions, view)
 
-import Html.App as App
 import Html exposing (Html, a, br, button, div, form, h1, h4, hr, label, p, text, textarea)
 import Html.Attributes exposing (class, href, for, name)
 import Html.Events exposing (onClick, onInput)

@@ -3,7 +3,6 @@ module IdeaFight.Compete exposing (Model, Msg, init, update, subscriptions, view
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
 
-import Html.App as App
 import Html exposing (Html, br, button, div, li, ol, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
