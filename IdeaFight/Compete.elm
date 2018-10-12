@@ -1,11 +1,13 @@
 module IdeaFight.Compete exposing (Model, Msg, init, subscriptions, update, view)
 
+import Browser.Events as Events
 import Char
 import Html exposing (Html, br, button, div, li, ol, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
+import Json.Decode as Decode
 import Random
 import String
 
@@ -50,8 +52,36 @@ update msg model =
                     ( Initialized <| Forest.fromList [], Cmd.none ) -- This should be impossible!
 
 
+decodeKeyPress : String -> String -> Decode.Decoder Msg
+decodeKeyPress left right =
+  Decode.map (keyToMsg left right) <| Decode.field "key" Decode.string
+
+keyToMsg : String -> String -> String -> Msg
+keyToMsg left right code =
+    if code == "1" then
+        Choice left
+
+    else if code == "2" then
+        Choice right
+
+    else
+        NoOp
+
+
 subscriptions : Model -> Sub Msg
-subscriptions model = Sub.none
+subscriptions model =
+    case model of
+        Uninitialized ->
+            Sub.none
+
+        Initialized forest ->
+            case Forest.getNextPair forest of
+                Just ( left, right ) ->
+                    Events.onKeyPress <| decodeKeyPress left right
+
+                Nothing ->
+                    Sub.none
+
 
 chooser : Forest.Forest String -> Html Msg
 chooser forest =
