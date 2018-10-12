@@ -3,40 +3,40 @@ module IdeaFight.Shuffle exposing (shuffle)
 import Random exposing (Generator)
 
 
-extractValueHelper : List a -> Int -> List a -> ( a, List a )
-extractValueHelper values index accumulator =
-    case ( index, values ) of
-        ( _, [] ) ->
-            Debug.crash "Out of values to extract"
+extractValueHelper : a -> List a -> Int -> List a -> ( a, List a )
+extractValueHelper first_value rest_values index accumulator =
+    case ( index, rest_values ) of
+        ( 0, _) ->
+            ( first_value, List.append (List.reverse accumulator) rest_values )
 
-        ( 0, head :: tail ) ->
-            ( head, List.append (List.reverse accumulator) tail )
+        ( _, []) ->
+            ( first_value, List.reverse accumulator )
 
         ( _, head :: tail ) ->
-            extractValueHelper tail (index - 1) <| head :: accumulator
+            extractValueHelper head tail (index - 1) <| first_value :: accumulator
 
 
-extractValue : List a -> Int -> ( a, List a )
-extractValue values index =
-    extractValueHelper values index []
+extractValue : a -> List a -> Int -> ( a, List a )
+extractValue first_value rest_values index =
+    extractValueHelper first_value rest_values index []
 
 
 shuffle : List a -> Generator (List a)
 shuffle values =
     case values of
         [] ->
-            Random.map (\_ -> []) Random.bool
+            Random.constant []
 
-        values ->
+        (first_value :: rest_values) ->
             let
                 randomIndexGenerator =
-                    Random.int 0 <| List.length values - 1
+                    Random.int 0 <| List.length rest_values
 
                 extractAndRecurse =
                     \index ->
                         let
                             ( randomHead, remainder ) =
-                                extractValue values index
+                                extractValue first_value rest_values index
 
                             remainderGen =
                                 shuffle remainder
