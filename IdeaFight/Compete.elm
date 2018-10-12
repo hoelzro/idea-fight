@@ -41,7 +41,7 @@ update msg model =
                     ( Initialized <| Forest.fromList contents, Cmd.none )
 
                 _ ->
-                    ( Initialized <| Forest.fromList [], Cmd.none ) -- This should be impossible!
+                    ( model, Cmd.none )
 
         Initialized forest ->
             case msg of
@@ -49,7 +49,7 @@ update msg model =
                     ( Initialized <| Forest.choose forest choice, Cmd.none )
 
                 _ ->
-                    ( Initialized <| Forest.fromList [], Cmd.none ) -- This should be impossible!
+                    ( model, Cmd.none )
 
 
 decodeKeyPress : String -> String -> Decode.Decoder Msg
