@@ -38,11 +38,11 @@ switchSubAppsIfNeeded ( model, cmd ) =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case ( msg, model ) of
-        ( LandingPageMsg msg, LandingPageModel model ) ->
-            switchSubAppsIfNeeded <| mapTEA LandingPageModel LandingPageMsg <| LandingPage.update msg model
+        ( LandingPageMsg landing_msg, LandingPageModel landing_model ) ->
+            switchSubAppsIfNeeded <| mapTEA LandingPageModel LandingPageMsg <| LandingPage.update landing_msg landing_model
 
-        ( CompeteMsg msg, CompeteModel model ) ->
-            mapTEA CompeteModel CompeteMsg <| Compete.update msg model
+        ( CompeteMsg compete_msg, CompeteModel compete_model ) ->
+            mapTEA CompeteModel CompeteMsg <| Compete.update compete_msg compete_model
 
         ( _, _ ) ->
             (model, Cmd.none) -- This should be impossible!
@@ -51,21 +51,21 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model of
-        LandingPageModel model ->
-            Sub.map LandingPageMsg <| LandingPage.subscriptions model
+        LandingPageModel landing_model ->
+            Sub.map LandingPageMsg <| LandingPage.subscriptions landing_model
 
-        CompeteModel model ->
-            Sub.map CompeteMsg <| Compete.subscriptions model
+        CompeteModel compete_model ->
+            Sub.map CompeteMsg <| Compete.subscriptions compete_model
 
 
 view : Model -> Html Msg
 view model =
     case model of
-        LandingPageModel model ->
-            Html.map LandingPageMsg <| LandingPage.view model
+        LandingPageModel landing_model ->
+            Html.map LandingPageMsg <| LandingPage.view landing_model
 
-        CompeteModel model ->
-            Html.map CompeteMsg <| Compete.view model
+        CompeteModel compete_model ->
+            Html.map CompeteMsg <| Compete.view compete_model
 
 
 main : Program Never Model Msg

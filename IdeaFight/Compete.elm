@@ -78,7 +78,7 @@ topValuesSoFar forest =
         [] ->
             text "We haven't found the best idea yet - keep choosing!"
 
-        topValues ->
+        _ ->
             div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
 
 
