@@ -1,7 +1,7 @@
 module IdeaFight.LandingPage exposing (Model, Msg, init, subscriptions, update, view)
 
 import Html exposing (Html, a, br, button, div, form, h1, h4, hr, label, p, text, textarea)
-import Html.Attributes exposing (class, for, href, name)
+import Html.Attributes exposing (class, for, href, name, target)
 import Html.Events exposing (onClick, onInput)
 
 
@@ -56,7 +56,7 @@ descriptionParagraph : Html Msg
 descriptionParagraph =
     p []
         [ text "This is a web application for helping you decide the priorities of your ideas. Here's a "
-        , a [ href "http://hoelz.ro/blog/idea-fight" ] [ text "blog post" ]
+        , a [ href "http://hoelz.ro/blog/idea-fight", target "_blank" ] [ text "blog post" ]
         , text " explaining the why and how."
         ]
 
