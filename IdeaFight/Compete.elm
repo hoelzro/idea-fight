@@ -39,7 +39,7 @@ update msg model =
                     ( Initialized <| Forest.fromList contents, Cmd.none )
 
                 _ ->
-                    Debug.crash "Somehow you got a non-initialization message on an uninitialized state"
+                    ( Initialized <| Forest.fromList [], Cmd.none ) -- This should be impossible!
 
         Initialized forest ->
             case msg of
@@ -47,7 +47,7 @@ update msg model =
                     ( Initialized <| Forest.choose forest choice, Cmd.none )
 
                 _ ->
-                    Debug.crash "Somehow you got an initialization message on an initialized state"
+                    ( Initialized <| Forest.fromList [], Cmd.none ) -- This should be impossible!
 
 
 subscriptions : Model -> Sub Msg

@@ -45,7 +45,7 @@ update msg model =
             mapTEA CompeteModel CompeteMsg <| Compete.update msg model
 
         ( _, _ ) ->
-            Debug.crash "Model-Message mismatch"
+            (model, Cmd.none) -- This should be impossible!
 
 
 subscriptions : Model -> Sub Msg

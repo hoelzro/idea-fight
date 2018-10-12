@@ -62,13 +62,13 @@ chooseNodes nodes choice =
                 List.append rest [ reparentNode b a ]
 
             else
-                Debug.crash "You somehow made an impossible choice"
+                List.append rest [ reparentNode a b ] -- This should be impossible!
 
         [ Node value children ] ->
             [ Node value <| chooseNodes children choice ]
 
         _ ->
-            Debug.crash "You somehow called chooseNodes on a totally ordered forest"
+            nodes -- This should be impossible!
 
 
 choose : Forest a -> a -> Forest a
