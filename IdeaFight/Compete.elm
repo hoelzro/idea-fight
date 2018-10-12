@@ -6,7 +6,6 @@ import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
-import Keyboard
 import Random
 import String
 
@@ -51,32 +50,8 @@ update msg model =
                     Debug.crash "Somehow you got an initialization message on an initialized state"
 
 
-mapKeyPresses : String -> String -> Keyboard.KeyCode -> Msg
-mapKeyPresses left right code =
-    if code == Char.toCode '1' then
-        Choice left
-
-    else if code == Char.toCode '2' then
-        Choice right
-
-    else
-        NoOp
-
-
 subscriptions : Model -> Sub Msg
-subscriptions model =
-    case model of
-        Uninitialized ->
-            Sub.none
-
-        Initialized forest ->
-            case Forest.getNextPair forest of
-                Just ( left, right ) ->
-                    Keyboard.presses <| mapKeyPresses left right
-
-                Nothing ->
-                    Sub.none
-
+subscriptions model = Sub.none
 
 chooser : Forest.Forest String -> Html Msg
 chooser forest =
