@@ -1,5 +1,6 @@
 module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, switchSubAppsIfNeeded, update, view)
 
+import Browser
 import Html exposing (Html)
 import IdeaFight.Compete as Compete
 import IdeaFight.LandingPage as LandingPage
@@ -68,10 +69,10 @@ view model =
             Html.map CompeteMsg <| Compete.view compete_model
 
 
-main : Program Never Model Msg
+main : Program () Model Msg
 main =
-    Html.program
-        { init = init
+  Browser.element
+        { init = always init
         , update = update
         , subscriptions = subscriptions
         , view = view
