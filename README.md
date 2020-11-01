@@ -15,9 +15,9 @@ http://idea-fight.hoelz.ro.
 If you want to install your own version in order to make changes, you'll need
 to install the [Elm compiler](http://elm-lang.org) version 0.19.1 (the most
 current as of this writing).  After you have Elm installed, you can build
-the JavaScript file using `elm-make`:
+the JavaScript file using `elm make`:
 
-    elm-make --output js/idea-fight.js Main.elm
+    elm make --output js/idea-fight.js Main.elm
 
 Copy the `js/`, `css/`, and `index.html` files to wherever you want to host your
 version, or simply open `index.html` in your browser.
