@@ -13,7 +13,7 @@ anything if you don't want to!  There's a version that you can use at
 http://idea-fight.hoelz.ro.
 
 If you want to install your own version in order to make changes, you'll need
-to install the [Elm compiler](http://elm-lang.org) version 0.17.1 (the most
+to install the [Elm compiler](http://elm-lang.org) version 0.19.1 (the most
 current as of this writing).  After you have Elm installed, you can build
 the JavaScript file using `elm-make`:
 
