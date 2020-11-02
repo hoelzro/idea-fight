@@ -1,8 +1,13 @@
 module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, switchSubAppsIfNeeded, update, view)
 
 import Browser
-import Html exposing (Html)
+import Html exposing (Html, button, div, text)
+import Html.Attributes exposing (class)
+import Html.Events exposing (onClick)
+import File exposing (File)
+import File.Select as Select
 import Json.Decode as Decode
+import Task
 
 import IdeaFight.Compete as Compete
 import IdeaFight.LandingPage as LandingPage
@@ -16,6 +21,9 @@ type Model
 type Msg
     = LandingPageMsg LandingPage.Msg
     | CompeteMsg Compete.Msg
+    | PerformImportMsg
+    | FileSelectedForImportMsg File
+    | FileLoadedMsg String
 
 
 mapTEA : (modela -> modelb) -> (msga -> msgb) -> ( modela, Cmd msga ) -> ( modelb, Cmd msgb )
@@ -61,6 +69,17 @@ update msg model =
         ( CompeteMsg compete_msg, CompeteModel compete_model ) ->
             mapTEA CompeteModel CompeteMsg <| Compete.update compete_msg compete_model
 
+        ( PerformImportMsg, _ ) ->
+          ( model, Select.file ["text/json"] FileSelectedForImportMsg )
+
+        ( FileSelectedForImportMsg file, _ ) ->
+          ( model, Task.perform FileLoadedMsg <| File.toString file)
+
+        ( FileLoadedMsg content, _ ) ->
+          case decodeModel content of
+            Ok newModel -> (newModel, Cmd.none)
+            Err err -> let _ = Debug.log "got error: " (Decode.errorToString err) in (model, Cmd.none) -- XXX handle me properly
+
         ( _, _ ) ->
             (model, Cmd.none) -- This should be impossible!
 
@@ -74,12 +93,18 @@ subscriptions model =
         CompeteModel compete_model ->
             Sub.map CompeteMsg <| Compete.subscriptions compete_model
 
+importButton : Html Msg
+importButton = button [ onClick PerformImportMsg, class "button-primary" ] [ text "Import" ]
 
 view : Model -> Html Msg
 view model =
     case model of
         LandingPageModel landing_model ->
-            Html.map LandingPageMsg <| LandingPage.view landing_model
+            let inner = Html.map LandingPageMsg <| LandingPage.view landing_model
+            in div [] [
+              inner
+            , importButton
+            ]
 
         CompeteModel compete_model ->
             Html.map CompeteMsg <| Compete.view compete_model
