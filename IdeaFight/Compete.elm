@@ -1,4 +1,4 @@
-module IdeaFight.Compete exposing (Model, Msg, decodeModel, init, subscriptions, update, view)
+module IdeaFight.Compete exposing (Model, Msg, decodeModel, encodeModel, init, subscriptions, update, view)
 
 import Browser.Events as Events
 import Char
@@ -8,6 +8,7 @@ import Html.Events exposing (onClick)
 import IdeaFight.PartialForest as Forest
 import IdeaFight.Shuffle as Shuffle
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Random
 import String
 
@@ -127,3 +128,12 @@ view model =
 
 decodeModel : Decode.Decoder Model
 decodeModel = Decode.field "nodes" <| Decode.map Initialized Forest.decodeJSON
+
+
+encodeModel : Model -> List (String, Encode.Value)
+encodeModel model =
+  case model of
+    Uninitialized -> []
+    Initialized forest ->
+      let encodedForest = Forest.encodeJSON forest
+      in [("nodes", encodedForest)]

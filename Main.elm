@@ -7,6 +7,7 @@ import Html.Events exposing (onClick)
 import File exposing (File)
 import File.Select as Select
 import Json.Decode as Decode
+import Json.Encode as Encode
 import Task
 
 import IdeaFight.Compete as Compete
@@ -59,6 +60,12 @@ decodeModel : String -> Result Decode.Error Model
 decodeModel =
   let modelDecoder = Decode.oneOf [ decodeLandingPageModel, decodeCompeteModel ]
   in Decode.decodeString modelDecoder
+
+encodeModel : Model -> Encode.Value
+encodeModel model =
+  case model of
+    LandingPageModel landing_model -> Encode.object <| ("__type__", Encode.string "landing_page") :: LandingPage.encodeModel landing_model
+    CompeteModel compete_model -> Encode.object <| ("__type__", Encode.string "compete") :: Compete.encodeModel compete_model
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =

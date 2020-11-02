@@ -1,9 +1,10 @@
-module IdeaFight.LandingPage exposing (Model, Msg, decodeModel, init, subscriptions, update, view)
+module IdeaFight.LandingPage exposing (Model, Msg, decodeModel, encodeModel, init, subscriptions, update, view)
 
 import Html exposing (Html, a, br, button, div, form, h1, h4, hr, label, p, text, textarea)
 import Html.Attributes exposing (class, for, href, name, target)
 import Html.Events exposing (onClick, onInput)
 import Json.Decode as Decode
+import Json.Encode as Encode
 
 
 type alias Model =
@@ -64,3 +65,9 @@ view (contents, _) =
 
 decodeModel : Decode.Decoder Model
 decodeModel = Decode.field "content" <| Decode.map2 Tuple.pair Decode.string <| Decode.succeed False
+
+
+encodeModel : Model -> List (String, Encode.Value)
+encodeModel (contents, _) =
+  let encodedContents = Encode.string contents
+  in [("content", encodedContents)]

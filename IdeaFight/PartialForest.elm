@@ -2,9 +2,10 @@
 -- for details.
 
 
-module IdeaFight.PartialForest exposing (Forest, choose, decodeJSON, fromList, getNextPair, topN)
+module IdeaFight.PartialForest exposing (Forest, choose, decodeJSON, encodeJSON, fromList, getNextPair, topN)
 
 import Json.Decode as Decode
+import Json.Encode as Encode
 
 
 type Node a
@@ -107,3 +108,12 @@ decodeNode = Decode.map2 Node decodeValue decodeChildren
 
 decodeJSON : Decode.Decoder (Forest String)
 decodeJSON = Decode.map Forest <| Decode.list decodeNode
+
+encodeNode : Node String -> Encode.Value
+encodeNode (Node value children) =
+  let encodedValue = Encode.string value
+      encodedChildren = Encode.list encodeNode children
+  in Encode.object [("value", encodedValue), ("children", encodedChildren)]
+
+encodeJSON : Forest String -> Encode.Value
+encodeJSON (Forest nodes) = Encode.list encodeNode nodes
