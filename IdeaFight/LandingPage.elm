@@ -44,11 +44,11 @@ inputs =
         ]
 
 
-inputForm : Html Msg
-inputForm =
+inputForm : String -> Html Msg
+inputForm contents =
     div []
         [ label [ for "idea-list" ] [ text "Enter one idea per line:" ]
-        , textarea [ onInput UpdateContents, class "u-full-width", name "idea-list" ] []
+        , textarea [ onInput UpdateContents, class "u-full-width", name "idea-list" ] [ text contents ]
         , button [ onClick Continue, class "button-primary" ] [ text "Continue >" ]
         ]
 
@@ -63,12 +63,12 @@ descriptionParagraph =
 
 
 view : Model -> Html Msg
-view model =
+view (contents, _) =
     div []
         [ h1 [] [ text "Idea Fight!" ]
         , h4 [] [ text "What's This?" ]
         , descriptionParagraph
-        , inputForm
+        , inputForm contents
         ]
 
 decodeModel : Decode.Decoder Model
