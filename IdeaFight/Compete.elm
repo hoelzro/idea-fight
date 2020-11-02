@@ -1,4 +1,4 @@
-module IdeaFight.Compete exposing (Model, Msg, init, subscriptions, update, view)
+module IdeaFight.Compete exposing (Model, Msg, decodeModel, init, subscriptions, update, view)
 
 import Browser.Events as Events
 import Char
@@ -124,3 +124,6 @@ view model =
                 , br [] []
                 , topValuesSoFar forest
                 ]
+
+decodeModel : Decode.Decoder Model
+decodeModel = Decode.field "nodes" <| Decode.map Initialized Forest.decodeJSON

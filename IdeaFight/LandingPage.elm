@@ -1,8 +1,9 @@
-module IdeaFight.LandingPage exposing (Model, Msg, init, subscriptions, update, view)
+module IdeaFight.LandingPage exposing (Model, Msg, decodeModel, init, subscriptions, update, view)
 
 import Html exposing (Html, a, br, button, div, form, h1, h4, hr, label, p, text, textarea)
 import Html.Attributes exposing (class, for, href, name, target)
 import Html.Events exposing (onClick, onInput)
+import Json.Decode as Decode
 
 
 type alias Model =
@@ -69,3 +70,6 @@ view model =
         , descriptionParagraph
         , inputForm
         ]
+
+decodeModel : Decode.Decoder Model
+decodeModel = Decode.field "content" <| Decode.map2 Tuple.pair Decode.string <| Decode.succeed False

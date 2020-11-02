@@ -2,6 +2,8 @@ module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, swi
 
 import Browser
 import Html exposing (Html)
+import Json.Decode as Decode
+
 import IdeaFight.Compete as Compete
 import IdeaFight.LandingPage as LandingPage
 
@@ -35,6 +37,20 @@ switchSubAppsIfNeeded ( model, cmd ) =
         _ ->
             ( model, cmd )
 
+ifType : String -> Decode.Decoder a -> Decode.Decoder a
+ifType expectedType successDecoder = Decode.field "__type__" Decode.string |> Decode.andThen (\gotType -> if gotType == expectedType then successDecoder else Decode.fail "type didn't match")
+
+decodeLandingPageModel : Decode.Decoder Model
+decodeLandingPageModel = ifType "landing_page" LandingPage.decodeModel |> Decode.map LandingPageModel
+
+decodeCompeteModel : Decode.Decoder Model
+decodeCompeteModel = ifType "compete" Compete.decodeModel |> Decode.map CompeteModel
+
+-- XXX map the error
+decodeModel : String -> Result Decode.Error Model
+decodeModel =
+  let modelDecoder = Decode.oneOf [ decodeLandingPageModel, decodeCompeteModel ]
+  in Decode.decodeString modelDecoder
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
