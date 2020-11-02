@@ -5,6 +5,7 @@ import Html exposing (Html, button, div, text)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import File exposing (File)
+import File.Download as Download
 import File.Select as Select
 import Json.Decode as Decode
 import Json.Encode as Encode
@@ -23,6 +24,7 @@ type Msg
     = LandingPageMsg LandingPage.Msg
     | CompeteMsg Compete.Msg
     | PerformImportMsg
+    | PerformExportMsg
     | FileSelectedForImportMsg File
     | FileLoadedMsg String
 
@@ -79,6 +81,11 @@ update msg model =
         ( PerformImportMsg, _ ) ->
           ( model, Select.file ["text/json"] FileSelectedForImportMsg )
 
+        ( PerformExportMsg, _ ) ->
+          let serializedModel = Encode.encode 0 <| encodeModel model
+              downloadCmd = Download.string "idea-fight.json" "application/json" serializedModel
+          in ( model, downloadCmd )
+
         ( FileSelectedForImportMsg file, _ ) ->
           ( model, Task.perform FileLoadedMsg <| File.toString file)
 
@@ -103,6 +110,9 @@ subscriptions model =
 importButton : Html Msg
 importButton = button [ onClick PerformImportMsg, class "button-primary" ] [ text "Import" ]
 
+exportButton : Html Msg
+exportButton = button [ onClick PerformExportMsg, class "button-primary" ] [ text "Export" ]
+
 view : Model -> Html Msg
 view model =
     case model of
@@ -111,10 +121,15 @@ view model =
             in div [] [
               inner
             , importButton
+            , exportButton
             ]
 
         CompeteModel compete_model ->
-            Html.map CompeteMsg <| Compete.view compete_model
+            let inner = Html.map CompeteMsg <| Compete.view compete_model
+            in div [] [
+              inner
+            , exportButton
+            ]
 
 
 main : Program () Model Msg
