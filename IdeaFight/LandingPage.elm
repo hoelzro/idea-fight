@@ -35,15 +35,6 @@ subscriptions _ =
     Sub.none
 
 
-inputs : Html Msg
-inputs =
-    div []
-        [ textarea [ onInput UpdateContents ] []
-        , br [] []
-        , button [ onClick Continue ] [ text "Continue >" ]
-        ]
-
-
 inputForm : String -> Html Msg
 inputForm contents =
     div []
