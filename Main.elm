@@ -1,8 +1,8 @@
 module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, switchSubAppsIfNeeded, update, view)
 
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, a, button, div, img, text)
+import Html.Attributes exposing (alt, attribute, class, href, src, style, target)
 import Html.Events exposing (onClick)
 import File exposing (File)
 import File.Download as Download
@@ -110,26 +110,47 @@ subscriptions model =
 importButton : Html Msg
 importButton = button [ onClick PerformImportMsg, class "button-primary" ] [ text "Import" ]
 
+
 exportButton : Html Msg
 exportButton = button [ onClick PerformExportMsg, class "button-primary" ] [ text "Export" ]
 
+
+repoLocation : String
+repoLocation = "https://github.com/hoelzro/idea-fight"
+
+
+ribbonImageLocation : String
+ribbonImageLocation = "https://camo.githubusercontent.com/e7bbb0521b397edbd5fe43e7f760759336b5e05f/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67"
+
+
+canonicalRibbonImageLocation : String
+canonicalRibbonImageLocation = "https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png"
+
+
 view : Model -> Html Msg
 view model =
-    case model of
-        LandingPageModel landing_model ->
-            let inner = Html.map LandingPageMsg <| LandingPage.view landing_model
-            in div [] [
-              inner
-            , importButton
-            , exportButton
-            ]
+    let
+        ribbonImage = img [style "position" "absolute", style "top" "0", style "right" "0", style "border" "0", src ribbonImageLocation, alt "Fork me on GitHub", attribute "data-canonical-src" canonicalRibbonImageLocation ] []
+        ribbonAnchor = a [href repoLocation, target "_blank" ] [ribbonImage]
+        innerView = case model of
+          LandingPageModel landing_model ->
+              let inner = Html.map LandingPageMsg <| LandingPage.view landing_model
+              in div [] [
+                inner
+              , importButton
+              , exportButton
+              ]
 
-        CompeteModel compete_model ->
-            let inner = Html.map CompeteMsg <| Compete.view compete_model
-            in div [] [
-              inner
-            , exportButton
-            ]
+          CompeteModel compete_model ->
+              let inner = Html.map CompeteMsg <| Compete.view compete_model
+              in div [] [
+                inner
+              , exportButton
+              ]
+        oneHalfColumnDiv = div [class "one-half", class "column", style "margin-top" "25px"] [innerView]
+        rowDiv = div [class "row"] [oneHalfColumnDiv]
+        containerDiv = div [class "container"] [rowDiv]
+    in div [] [ ribbonAnchor , containerDiv ]
 
 
 main : Program () Model Msg
