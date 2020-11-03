@@ -1,7 +1,7 @@
 module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, switchSubAppsIfNeeded, update, view)
 
 import Browser
-import Html exposing (Html, a, button, div, img, text)
+import Html exposing (Html, a, button, div, img, nav, text)
 import Html.Attributes exposing (alt, attribute, class, href, src, style, target)
 import Html.Events exposing (onClick)
 import File exposing (File)
@@ -130,27 +130,21 @@ canonicalRibbonImageLocation = "https://s3.amazonaws.com/github/ribbons/forkme_r
 view : Model -> Html Msg
 view model =
     let
+        navbar = nav [] [ importButton, exportButton ]
         ribbonImage = img [style "position" "absolute", style "top" "0", style "right" "0", style "border" "0", src ribbonImageLocation, alt "Fork me on GitHub", attribute "data-canonical-src" canonicalRibbonImageLocation ] []
         ribbonAnchor = a [href repoLocation, target "_blank" ] [ribbonImage]
         innerView = case model of
           LandingPageModel landing_model ->
               let inner = Html.map LandingPageMsg <| LandingPage.view landing_model
-              in div [] [
-                inner
-              , importButton
-              , exportButton
-              ]
+              in div [] [ inner ]
 
           CompeteModel compete_model ->
               let inner = Html.map CompeteMsg <| Compete.view compete_model
-              in div [] [
-                inner
-              , exportButton
-              ]
+              in div [] [ inner ]
         oneHalfColumnDiv = div [class "one-half", class "column", style "margin-top" "25px"] [innerView]
         rowDiv = div [class "row"] [oneHalfColumnDiv]
         containerDiv = div [class "container"] [rowDiv]
-    in div [] [ ribbonAnchor , containerDiv ]
+    in div [] [ navbar, ribbonAnchor , containerDiv ]
 
 
 main : Program () Model Msg
