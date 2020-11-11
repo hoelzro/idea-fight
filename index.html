@@ -16,8 +16,12 @@
   </script>
 
   <script type='text/javascript'>
-    var node = document.getElementById('elm-application');
-    var app = Elm.Main.init({ node });
+    let sessionState = window.sessionStorage.getItem('idea-fight-state');
+    let node = document.getElementById('elm-application');
+    let app = Elm.Main.init({ node, flags: sessionState });
+    app.ports.saveState.subscribe(function(message) {
+        window.sessionStorage.setItem('idea-fight-state', message);
+    });
   </script>
 </body>
 </html>

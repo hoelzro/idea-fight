@@ -1,7 +1,7 @@
-module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, switchSubAppsIfNeeded, update, view)
+port module Main exposing (Model(..), Msg(..), init, main, mapTEA, subscriptions, switchSubAppsIfNeeded, update, view)
 
 import Browser
-import Html exposing (Html, a, button, div, img, nav, text)
+import Html exposing (Html, a, button, div, img, nav, p, text)
 import Html.Attributes exposing (alt, attribute, class, href, src, style, target)
 import Html.Events exposing (onClick)
 import File exposing (File)
@@ -18,6 +18,7 @@ import IdeaFight.LandingPage as LandingPage
 type Model
     = LandingPageModel LandingPage.Model
     | CompeteModel Compete.Model
+    | LoadOldState Model
 
 
 type Msg
@@ -27,6 +28,8 @@ type Msg
     | PerformExportMsg
     | FileSelectedForImportMsg File
     | FileLoadedMsg String
+    | LoadOldModelMsg
+    | IgnoreOldModelMsg
 
 
 mapTEA : (modela -> modelb) -> (msga -> msgb) -> ( modela, Cmd msga ) -> ( modelb, Cmd msgb )
@@ -34,10 +37,13 @@ mapTEA modelTransform msgTransform ( oldModel, oldCmd ) =
     ( modelTransform oldModel, Cmd.map msgTransform oldCmd )
 
 
-init : ( Model, Cmd Msg )
-init =
-    mapTEA LandingPageModel LandingPageMsg <| LandingPage.init
-
+init : Maybe String -> ( Model, Cmd Msg )
+init previousSessionState =
+    case previousSessionState of
+      Nothing -> mapTEA LandingPageModel LandingPageMsg <| LandingPage.init
+      Just serializedState -> case decodeModel serializedState of
+        Ok state -> (LoadOldState state, Cmd.none)
+        Err _ -> mapTEA LandingPageModel LandingPageMsg <| LandingPage.init -- XXX inform the user?
 
 switchSubAppsIfNeeded : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 switchSubAppsIfNeeded ( model, cmd ) =
@@ -68,9 +74,10 @@ encodeModel model =
   case model of
     LandingPageModel landing_model -> Encode.object <| ("__type__", Encode.string "landing_page") :: LandingPage.encodeModel landing_model
     CompeteModel compete_model -> Encode.object <| ("__type__", Encode.string "compete") :: Compete.encodeModel compete_model
+    LoadOldState innerModel -> encodeModel innerModel
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
+update_ : Msg -> Model -> ( Model, Cmd Msg )
+update_ msg model =
     case ( msg, model ) of
         ( LandingPageMsg landing_msg, LandingPageModel landing_model ) ->
             switchSubAppsIfNeeded <| mapTEA LandingPageModel LandingPageMsg <| LandingPage.update landing_msg landing_model
@@ -94,9 +101,22 @@ update msg model =
             Ok newModel -> (newModel, Cmd.none)
             Err err -> let _ = Debug.log "got error: " (Decode.errorToString err) in (model, Cmd.none) -- XXX handle me properly
 
+        ( LoadOldModelMsg, LoadOldState oldModel) ->
+          ( oldModel, Cmd.none )
+
+        ( IgnoreOldModelMsg, _) ->
+          init Nothing
+
         ( _, _ ) ->
             (model, Cmd.none) -- This should be impossible!
 
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+  let (newModel, newMsg) = update_ msg model
+      serializedModel = Encode.encode 0 <| encodeModel newModel
+      saveMsg = saveState serializedModel
+  in (newModel, Cmd.batch [newMsg, saveMsg])
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -106,6 +126,9 @@ subscriptions model =
 
         CompeteModel compete_model ->
             Sub.map CompeteMsg <| Compete.subscriptions compete_model
+
+        LoadOldState old_model ->
+          Sub.none
 
 importButton : Html Msg
 importButton = button [ onClick PerformImportMsg, class "button-primary" ] [ text "Import" ]
@@ -141,16 +164,22 @@ view model =
           CompeteModel compete_model ->
               let inner = Html.map CompeteMsg <| Compete.view compete_model
               in div [] [ inner ]
+          LoadOldState oldModel ->
+            let msg = p [] [text "It seems you have returned after an unfinished session; would you like to restore the previous session's state?"]
+                loadButton = button [ onClick LoadOldModelMsg, class "button-primary" ] [text "Yes"]
+                ignoreButton = button [ onClick IgnoreOldModelMsg, class "button-primary" ] [text "No"]
+              in div [] [ msg, loadButton, ignoreButton ]
         oneHalfColumnDiv = div [class "one-half", class "column", style "margin-top" "25px"] [innerView]
         rowDiv = div [class "row"] [oneHalfColumnDiv]
         containerDiv = div [class "container"] [rowDiv]
     in div [] [ navbar, ribbonAnchor , containerDiv ]
 
+port saveState : String -> Cmd msg
 
-main : Program () Model Msg
+main : Program (Maybe String) Model Msg
 main =
   Browser.element
-        { init = always init
+        { init = init
         , update = update
         , subscriptions = subscriptions
         , view = view
