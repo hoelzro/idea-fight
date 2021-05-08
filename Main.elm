@@ -23,7 +23,7 @@ type Model
 
 type Msg
     = LandingPageMsg LandingPage.Msg
-    | CompeteMsg Compete.Msg
+    | CompeteMsg (Compete.Msg String)
     | PerformImportMsg
     | PerformExportMsg
     | FileSelectedForImportMsg File

@@ -18,18 +18,18 @@ type Model a
     | Initialized (Forest.Forest a)
 
 
-type Msg
-    = ShuffledContents (List String)
+type Msg a
+    = ShuffledContents (List a)
     | Choice String
     | NoOp
 
 
-init : List String -> ( Model String, Cmd Msg )
+init : List String -> ( Model String, Cmd (Msg String) )
 init lines =
     ( Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines )
 
 
-update : Msg -> Model String -> ( Model String, Cmd Msg )
+update : Msg String -> Model String -> ( Model String, Cmd (Msg String) )
 update msg model =
     case model of
         Uninitialized ->
@@ -49,11 +49,11 @@ update msg model =
                     ( model, Cmd.none )
 
 
-decodeKeyPress : String -> String -> Decode.Decoder Msg
+decodeKeyPress : String -> String -> Decode.Decoder (Msg String)
 decodeKeyPress left right =
   Decode.map (keyToMsg left right) <| Decode.field "key" Decode.string
 
-keyToMsg : String -> String -> String -> Msg
+keyToMsg : String -> String -> String -> Msg String
 keyToMsg left right code =
     if code == "1" then
         Choice left
@@ -65,7 +65,7 @@ keyToMsg left right code =
         NoOp
 
 
-subscriptions : Model String -> Sub Msg
+subscriptions : Model String -> Sub (Msg String)
 subscriptions model =
     case model of
         Uninitialized ->
@@ -80,7 +80,7 @@ subscriptions model =
                     Sub.none
 
 
-chooser : Forest.Forest String -> Html Msg
+chooser : Forest.Forest String -> Html (Msg String)
 chooser forest =
     case Forest.getNextPair forest of
         Just ( lhs, rhs ) ->
@@ -95,7 +95,7 @@ chooser forest =
             text "Your ideas are totally ordered!"
 
 
-topValuesSoFar : Forest.Forest String -> Html Msg
+topValuesSoFar : Forest.Forest String -> Html (Msg String)
 topValuesSoFar forest =
     let
         topValues =
@@ -109,7 +109,7 @@ topValuesSoFar forest =
             div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
 
 
-view : Model String -> Html Msg
+view : Model String -> Html (Msg String)
 view model =
     case model of
         Uninitialized ->
