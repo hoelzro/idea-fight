@@ -133,7 +133,6 @@ subscriptions model =
 importButton : Html Msg
 importButton = button [ onClick PerformImportMsg, class "button-primary" ] [ text "Import" ]
 
-
 exportButton : Html Msg
 exportButton = button [ onClick PerformExportMsg, class "button-primary" ] [ text "Export" ]
 
@@ -161,7 +160,7 @@ view model =
               in div [] [ inner ]
 
           CompeteModel compete_model ->
-              let inner = Html.map CompeteMsg <| Compete.view Html.text compete_model
+              let inner = Html.map CompeteMsg <| Compete.view Html.text Html.text compete_model
               in div [] [ inner ]
           LoadOldState oldModel ->
             let msg = p [] [text "It seems you have returned after an unfinished session; would you like to restore the previous session's state?"]

@@ -109,17 +109,17 @@ topValuesSoFar render forest =
             div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ render value ]) topValues ]
 
 
-view : Renderer idea -> Model idea -> Html (Msg idea)
-view render model =
+view : Renderer idea -> Renderer idea -> Model idea -> Html (Msg idea)
+view renderChoice renderTopValue model =
     case model of
         Uninitialized ->
             text ""
 
         Initialized forest ->
             div []
-                [ chooser render forest
+                [ chooser renderChoice forest
                 , br [] []
-                , topValuesSoFar render forest
+                , topValuesSoFar renderTopValue forest
                 ]
 
 decodeModel : Decode.Decoder (Model String)
