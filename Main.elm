@@ -17,7 +17,7 @@ import IdeaFight.LandingPage as LandingPage
 
 type Model
     = LandingPageModel LandingPage.Model
-    | CompeteModel Compete.Model
+    | CompeteModel (Compete.Model String)
     | LoadOldState Model
 
 
@@ -49,7 +49,7 @@ switchSubAppsIfNeeded : ( Model, Cmd Msg ) -> ( Model, Cmd Msg )
 switchSubAppsIfNeeded ( model, cmd ) =
     case model of
         LandingPageModel ( contents, True ) ->
-            mapTEA CompeteModel CompeteMsg <| Compete.init contents
+            mapTEA CompeteModel CompeteMsg <| Compete.init <| String.lines <| String.trim contents
 
         _ ->
             ( model, cmd )

@@ -13,9 +13,9 @@ import Random
 import String
 
 
-type Model
+type Model a
     = Uninitialized
-    | Initialized (Forest.Forest String)
+    | Initialized (Forest.Forest a)
 
 
 type Msg
@@ -24,16 +24,12 @@ type Msg
     | NoOp
 
 
-init : String -> ( Model, Cmd Msg )
-init contents =
-    let
-        lines =
-            String.lines <| String.trim contents
-    in
+init : List String -> ( Model String, Cmd Msg )
+init lines =
     ( Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines )
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
+update : Msg -> Model String -> ( Model String, Cmd Msg )
 update msg model =
     case model of
         Uninitialized ->
@@ -69,7 +65,7 @@ keyToMsg left right code =
         NoOp
 
 
-subscriptions : Model -> Sub Msg
+subscriptions : Model String -> Sub Msg
 subscriptions model =
     case model of
         Uninitialized ->
@@ -113,7 +109,7 @@ topValuesSoFar forest =
             div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
 
 
-view : Model -> Html Msg
+view : Model String -> Html Msg
 view model =
     case model of
         Uninitialized ->
@@ -126,11 +122,11 @@ view model =
                 , topValuesSoFar forest
                 ]
 
-decodeModel : Decode.Decoder Model
+decodeModel : Decode.Decoder (Model String)
 decodeModel = Decode.field "nodes" <| Decode.map Initialized Forest.decodeJSON
 
 
-encodeModel : Model -> List (String, Encode.Value)
+encodeModel : Model String -> List (String, Encode.Value)
 encodeModel model =
   case model of
     Uninitialized -> []
