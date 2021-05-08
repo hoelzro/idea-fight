@@ -24,7 +24,7 @@ type Msg idea
 
 type alias Renderer idea = idea -> Html (Msg idea)
 
-init : List String -> ( Model String, Cmd (Msg String) )
+init : List idea -> ( Model idea, Cmd (Msg idea) )
 init lines =
     ( Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines )
 
