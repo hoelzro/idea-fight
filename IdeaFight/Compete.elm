@@ -1,4 +1,4 @@
-module IdeaFight.Compete exposing (Model, Msg, decodeModel, encodeModel, init, subscriptions, update, view)
+module IdeaFight.Compete exposing (Model, Msg, decodeModel, encodeModel, init, subscriptions, update, view, topValues)
 
 import Browser.Events as Events
 import Char
@@ -98,15 +98,15 @@ chooser render forest =
 topValuesSoFar : Renderer idea -> Forest.Forest idea -> Html (Msg idea)
 topValuesSoFar render forest =
     let
-        topValues =
+        topIdeas =
             Forest.topN forest
     in
-    case topValues of
+    case Forest.topN forest of
         [] ->
             text "We haven't found the best idea yet - keep choosing!"
 
         _ ->
-            div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ render value ]) topValues ]
+            div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ render value ]) topIdeas ]
 
 
 view : Renderer idea -> Renderer idea -> Model idea -> Html (Msg idea)
@@ -133,3 +133,9 @@ encodeModel model =
     Initialized forest ->
       let encodedForest = Forest.encodeJSON forest
       in [("nodes", encodedForest)]
+
+topValues : Model idea -> List idea
+topValues model = 
+    case model of
+        Uninitialized -> []
+        Initialized forest -> Forest.topN forest
