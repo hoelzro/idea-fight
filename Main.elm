@@ -137,7 +137,6 @@ importButton = button [ onClick PerformImportMsg, class "button-primary" ] [ tex
 exportButton : Html Msg
 exportButton = button [ onClick PerformExportMsg, class "button-primary" ] [ text "Export" ]
 
-
 repoLocation : String
 repoLocation = "https://github.com/hoelzro/idea-fight"
 
@@ -162,7 +161,7 @@ view model =
               in div [] [ inner ]
 
           CompeteModel compete_model ->
-              let inner = Html.map CompeteMsg <| Compete.view compete_model
+              let inner = Html.map CompeteMsg <| Compete.view Html.text compete_model
               in div [] [ inner ]
           LoadOldState oldModel ->
             let msg = p [] [text "It seems you have returned after an unfinished session; would you like to restore the previous session's state?"]

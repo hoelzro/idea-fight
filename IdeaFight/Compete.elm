@@ -12,24 +12,24 @@ import Json.Encode as Encode
 import Random
 import String
 
-
-type Model a
+type Model idea
     = Uninitialized
-    | Initialized (Forest.Forest a)
+    | Initialized (Forest.Forest idea)
 
 
-type Msg a
-    = ShuffledContents (List a)
-    | Choice String
+type Msg idea
+    = ShuffledContents (List idea)
+    | Choice idea
     | NoOp
 
+type alias Renderer idea = idea -> Html (Msg idea)
 
 init : List String -> ( Model String, Cmd (Msg String) )
 init lines =
     ( Uninitialized, Random.generate ShuffledContents <| Shuffle.shuffle lines )
 
 
-update : Msg String -> Model String -> ( Model String, Cmd (Msg String) )
+update : Msg idea -> Model idea -> ( Model idea, Cmd (Msg idea) )
 update msg model =
     case model of
         Uninitialized ->
@@ -49,11 +49,11 @@ update msg model =
                     ( model, Cmd.none )
 
 
-decodeKeyPress : String -> String -> Decode.Decoder (Msg String)
+decodeKeyPress : idea -> idea -> Decode.Decoder (Msg idea)
 decodeKeyPress left right =
   Decode.map (keyToMsg left right) <| Decode.field "key" Decode.string
 
-keyToMsg : String -> String -> String -> Msg String
+keyToMsg : idea -> idea -> String -> Msg idea
 keyToMsg left right code =
     if code == "1" then
         Choice left
@@ -65,7 +65,7 @@ keyToMsg left right code =
         NoOp
 
 
-subscriptions : Model String -> Sub (Msg String)
+subscriptions : Model idea -> Sub (Msg idea)
 subscriptions model =
     case model of
         Uninitialized ->
@@ -80,23 +80,23 @@ subscriptions model =
                     Sub.none
 
 
-chooser : Forest.Forest String -> Html (Msg String)
-chooser forest =
+chooser : Renderer idea -> Forest.Forest idea -> Html (Msg idea)
+chooser render forest =
     case Forest.getNextPair forest of
         Just ( lhs, rhs ) ->
             div []
                 [ text "Which of these ideas do you like better?"
                 , br [] []
-                , button [ onClick <| Choice lhs, class "button-primary" ] [ text lhs ]
-                , button [ onClick <| Choice rhs, class "button-primary" ] [ text rhs ]
+                , button [ onClick <| Choice lhs, class "button-primary" ] [ render lhs ]
+                , button [ onClick <| Choice rhs, class "button-primary" ] [ render rhs ]
                 ]
 
         Nothing ->
             text "Your ideas are totally ordered!"
 
 
-topValuesSoFar : Forest.Forest String -> Html (Msg String)
-topValuesSoFar forest =
+topValuesSoFar : Renderer idea -> Forest.Forest idea -> Html (Msg idea)
+topValuesSoFar render forest =
     let
         topValues =
             Forest.topN forest
@@ -106,20 +106,20 @@ topValuesSoFar forest =
             text "We haven't found the best idea yet - keep choosing!"
 
         _ ->
-            div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ text value ]) topValues ]
+            div [] [ text "Your best ideas:", ol [] <| List.map (\value -> li [] [ render value ]) topValues ]
 
 
-view : Model String -> Html (Msg String)
-view model =
+view : Renderer idea -> Model idea -> Html (Msg idea)
+view render model =
     case model of
         Uninitialized ->
             text ""
 
         Initialized forest ->
             div []
-                [ chooser forest
+                [ chooser render forest
                 , br [] []
-                , topValuesSoFar forest
+                , topValuesSoFar render forest
                 ]
 
 decodeModel : Decode.Decoder (Model String)
